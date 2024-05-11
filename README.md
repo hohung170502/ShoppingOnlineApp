@@ -12,7 +12,7 @@
 - **npx expo start**
 #### Khởi Chạy
 
-- **npm start** # for production**
+- **npm start** 
 
 ### Sử Dụng
 
