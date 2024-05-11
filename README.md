@@ -13,7 +13,8 @@
 #### Khởi Chạy
 
 - **npm start** 
-
+#### Phiên Bản Expo hiện tại là: SDK 50 phải Upgrade Expo lên SDK 51
+- **npm install expo@51** 
 ### Sử Dụng
 
 - **User**: Các chức năng cơ bản bao gồm: đăng ký, đăng nhập, mua hàng, bình luận, ...
