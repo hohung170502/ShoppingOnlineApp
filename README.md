@@ -1,4 +1,4 @@
-# ShoppingApp
+# AkaraApp
 
 ## Hướng Dẫn Sử Dụng
 
