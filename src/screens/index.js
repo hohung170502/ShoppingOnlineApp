@@ -18,3 +18,4 @@ export * from './userRating';
 export * from './users';
 export * from './myCommentList';
 export * from './membership';
+export * from './changePassword';

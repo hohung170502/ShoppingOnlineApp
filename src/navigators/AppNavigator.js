@@ -12,6 +12,7 @@ import {
   CategoryList,
   CategoryShow,
   ChangeLanguage,
+  ChangePasswordScreen,
   Chart,
   CommentList,
   CommentReply,
@@ -33,11 +34,14 @@ import {
   UserInfo,
   UserList,
   UserRating,
-} from '~/screens';
+} from '../screens';
 
 import { colors } from '~/styles';
 import { MyTabs } from './MyTabs';
 import { navigationRef } from './navigationService';
+import { ReloadEmailScreen } from '../screens/reloadEmail/ReloadEmail';
+import AccountVerificationScreen from '../screens/AccountVerification/AccountVerification';
+import { PasswordEmailScreen } from '../screens/passwordEmail';
 
 const Stack = createStackNavigator();
 
@@ -109,6 +113,22 @@ export const AppNavigator = () => {
             <Stack.Screen
               name={SCREENS.MY_COMMENT_LIST}
               component={MyCommentList}
+            />
+            <Stack.Screen
+              name={SCREENS.CHANGE_PASSWORD}
+              component={ChangePasswordScreen}
+            />
+             <Stack.Screen
+              name={SCREENS.RELOAD_EMAIL}
+              component={ReloadEmailScreen}
+            />
+            <Stack.Screen
+              name={SCREENS.ACCOUNT_VERIFICATION}
+              component={AccountVerificationScreen}
+            />
+            <Stack.Screen
+              name={SCREENS.PASSWORD_EMAIL}
+              component={PasswordEmailScreen}
             />
             <Stack.Screen name={SCREENS.MEMBERSHIP} component={Membership} />
           </Stack.Group>

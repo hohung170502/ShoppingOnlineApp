@@ -42,7 +42,7 @@ export const UserCard = (props) => {
           </View>
         </LinearGradient>
         
-        <View style={styles.cumulativeSlide}>
+        {/* <View style={styles.cumulativeSlide}>
               
               <View style={{ flex: 1 }}>
                 <Text
@@ -87,7 +87,7 @@ export const UserCard = (props) => {
               </View>
             <Text style={styles.tittle}>{t('LevelScreen.membershipLevel')}</Text>
 
-        </View>
+        </View> */}
             
       </View>
 

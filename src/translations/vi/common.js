@@ -74,8 +74,11 @@ export const common = {
   rating: 'Đánh giá',
   comment: 'Bình luận',
   myCommentList: 'Bình luận của tôi',
+  changePassword: 'Đổi mật khẩu',
 
   // msgs
+  emailNotVerified: 'Email chưa xác minh',
+  confirmDeleteTitle: 'Bạn muốn xoá Tài khoản',
   deleteText: 'Bạn có chắc chắn muốn xóa tài khoản? ',
   deleteMessage: 'Bạn có chắc chắn muốn xóa?',
   removeProductsMsg: 'Bạn muốn xoá tất cả sản phẩm ra khỏi giỏ hàng?',
@@ -109,6 +112,21 @@ export const common = {
     changeLanguage: 'Thay đổi ngôn ngữ',
     commentReply: 'Phản hồi bình luận',
     membership: 'Hạng thành viên',
+    accountVerification:'Xác minh tài khoản',
+    security: 'Để tăng cường bảo mật cho tài khoản của bạn, hãy xác minh thông tin bằng một trong những cách sau.',
+    emailVerification: 'Xác minh bằng liên kết Email',
+    emailVer: 'Liên kết giữa email',
+    emailnoti:'Vui lòng kiểm tra thông báo đã được gửi đến Email đến',
+    sendEmail: 'Vui lòng chờ trong  để gửi lại.',
+    resendEmailNoti: 'Bạn vẫn chưa nhận được?',
+    ResendEmail: 'Gửi lại',
+    checkVerification: 'Xác minh tài khoản thành công',
+    checkLogin: 'Đang đăng nhập vào tài khoản của bạn...',
+    addPassword: 'Thêm mật khẩu',
+    newPassword: 'Mật khẩu mới',
+    confirmPassword: 'Xác nhận mật khẩu',
+    waitForPasswordReset: 'Vui lòng chờ trong',
+    seconds: 'giây để gửi lại',
 
   },
 
@@ -166,15 +184,7 @@ export const common = {
   SalespolicyScreen: {
     Salespolicy: 'Chính sách bán hàng',
   },
-  FreeScreen: {
-    Freefive: 'Miễn phí giao hàng cho đơn hàng từ 5 triệu',
-  },
-  GenuinecommitScreen: {
-    Genuinecommit: "Cam kết hàng chính hãng 100%",
-  },
-  exchangeScreen: {
-    exchange: "Đổi trả trong vòng 10 ngày",
-  },
+  
 
   // firebase
   invalidEmail: 'Email không hợp lệ',

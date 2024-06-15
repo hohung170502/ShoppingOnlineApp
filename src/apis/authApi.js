@@ -1,53 +1,73 @@
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  deleteUser,
-} from 'firebase/auth';
-import {
-  doc,
-  getDoc,
-  serverTimestamp,
-  setDoc,
-  updateDoc,
-} from 'firebase/firestore';
-import i18n from 'i18next';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, deleteUser, sendSignInLinkToEmail, sendPasswordResetEmail, sendEmailVerification,  } from 'firebase/auth';
+import { doc, getDoc, serverTimestamp, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { auth, db } from '../config'; // Đảm bảo import auth và db từ Firebase config của bạn
+import { COLLECTIONS } from '../constants'; // Đảm bảo import COLLECTIONS từ constants của bạn
+import { getAvatarLink } from '../utils'; // Import các utils cần thiết, ví dụ getAvatarLink
 
-import { auth, db } from '../config';
-import { COLLECTIONS } from '../constants';
-import { getAvatarLink } from '../utils';
+const sendEmailVerificationLink = async () => {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      console.error('No user found.');
+      return { status: 'error', message: 'No user found.' };
+    }
+
+    await sendEmailVerification(user);
+    console.log('Email verification sent successfully.');
+    return { status: 'success' };
+  } catch (error) {
+    console.error('Error sending email verification:', error);
+    return { status: 'error', message: error.message };
+  }
+};
+
+const sendPasswordResetLink = async (email) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+
+    console.log('Password reset email sent successfully.');
+    return { status: 'success' };
+  } catch (error) {
+    console.error('Error sending password reset email:', error);
+    let message = error.code;
+
+    // Xử lý mã lỗi theo yêu cầu của ứng dụng của bạn
+    if (message === 'auth/invalid-email') message = 'Invalid email address';
+
+    return { status: 'error', message };
+  }
+};
 
 const login = async (email, password) => {
   try {
     const response = await signInWithEmailAndPassword(auth, email, password);
-
-    // thông tin người dùng
     const userCredential = response.user;
+
+    // Kiểm tra xem email đã được xác minh chưa
+    if (!userCredential.emailVerified) {
+      await sendEmailVerificationLink(email); // Gửi lại email xác minh nếu cần thiết
+      return { status: 'error', message: 'Email not verified' };
+    }
+
     const uid = userCredential.uid;
-
     const docRef = doc(db, COLLECTIONS.USERS, uid);
-
     const docSnap = await getDoc(docRef);
 
-    // check tài liệu tồn tại hay không?
     if (docSnap.exists()) {
       const data = docSnap.data();
-
       return {
         status: 'success',
-        message: i18n.t('loginSuccessfully'),
+        message: 'loginSuccessfully',
         data,
       };
     } else {
-      // docSnap.data() will be undefined in this case
-      // console.log('No such document!');
+      console.log('No such document!');
     }
   } catch (error) {
     let message = error.code;
 
-    if (message === 'auth/invalid-email') message = i18n.t('invalidEmail');
-    if (message === 'auth/invalid-credential')
-      message = i18n.t('invalidCredential');
+    if (message === 'auth/invalid-email') message = 'Invalid email address';
+    if (message === 'auth/invalid-credential') message = 'Invalid credentials';
 
     return { status: 'error', message };
   }
@@ -55,19 +75,11 @@ const login = async (email, password) => {
 
 const signUp = async (fullname, email, password) => {
   try {
-    const response = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password,
-    );
-
-    // thông tin người dùng
+    const response = await createUserWithEmailAndPassword(auth, email, password);
     const userCredential = response.user;
     const uid = userCredential.uid;
 
     const docRef = doc(db, COLLECTIONS.USERS, uid);
-
-    // thực hiện thêm thông tin mới
     await setDoc(docRef, {
       uid,
       fullname,
@@ -78,92 +90,102 @@ const signUp = async (fullname, email, password) => {
       isAdmin: false,
     });
 
-    // lấy lại thông tin sau khi thêm
+    // Gửi email xác minh
+    await sendEmailVerificationLink(email);
+
     const docSnap = await getDoc(docRef);
 
-    // check tài liệu tồn hay không?
     if (docSnap.exists()) {
       const data = docSnap.data();
       return {
         status: 'success',
-        message: i18n.t('signUpSuccessfully'),
+        message: 'Sign up successful. Email verification sent.',
         data,
       };
     } else {
-      // docSnap.data() will be undefined in this case
-      // console.log('No such document!');
+      console.log('No such document!');
     }
   } catch (error) {
     let message = error.code;
 
-    if (message === 'auth/email-already-in-use')
-      message = i18n.t('emailAlreadyInUse');
-    if (message === 'auth/invalid-email') message = i18n.t('invalidEmail');
-    if (message === 'auth/weak-password') message = i18n.t('weakPassword');
+    if (message === 'auth/email-already-in-use') message = 'Email already in use';
+    if (message === 'auth/invalid-email') message = 'Invalid email address';
+    if (message === 'auth/weak-password') message = 'Weak password';
 
     return { status: 'error', message };
   }
 };
+
+
+
 const remove = async (uid) => {
   try {
     const docRef = doc(db, COLLECTIONS.USERS, uid);
-
-    // Xoá thông tin
     await deleteDoc(docRef);
 
     return {
       status: 'success',
-      message: i18n.t('successfully'),
-    };
-  } catch (error) {}
-};
-const logout = async () => {
-  try {
-    signOut(auth);
-    return {
-      status: 'success',
+      message: 'Document successfully deleted',
     };
   } catch (error) {
+    console.error('Error removing document:', error);
     return {
       status: 'error',
+      message: 'Failed to delete document',
     };
   }
 };
-const deactivateAccount = async (uid) => {
+
+const logout = async () => {
   try {
-    const user = auth.currentUser;
-    const uid = user.uid;
-    const docRef = doc(db, COLLECTIONS.USERS, uid);
-
-    // Vô hiệu hóa tài khoản (cập nhật tài liệu Firestore)
-    await updateDoc(docRef, {
-      isActive: false,
-      deactivatedAt: serverTimestamp(),
-    });
-    deleteUser(user);
-
+    await signOut(auth);
     return {
       status: 'success',
-      message: i18n.t('accountDeactivated'),
+      message: 'Logout successful',
     };
   } catch (error) {
-    // console.error('Error deactivating account:', error);
+    console.error('Error logging out:', error);
     return {
       status: 'error',
-      message: i18n.t('accountDeactivationFailed'),
+      message: 'Failed to log out',
+    };
+  }
+};
+
+const deleteAccount = async () => {
+  try {
+    const user = auth.currentUser;
+    if (user) {
+      const uid = user.uid;
+      const docRef = doc(db, COLLECTIONS.USERS, uid);
+      await deleteDoc(docRef);
+      await deleteUser(user);
+
+      return {
+        status: 'success',
+        message: 'Account successfully deleted',
+      };
+    } else {
+      return {
+        status: 'error',
+        message: 'No user logged in',
+      };
+    }
+  } catch (error) {
+    console.error('Error deleting account:', error);
+    return {
+      status: 'error',
+      message: 'Failed to delete account',
     };
   }
 };
 
 const updateUserProfile = async (newInformation) => {
   try {
-    // lấy thông tin người dùng
     const user = auth.currentUser;
     const uid = user.uid;
-
     const docRef = doc(db, COLLECTIONS.USERS, uid);
 
-    // cập nhật thông tin người dùng
     await updateDoc(docRef, {
       ...newInformation,
       updatedAt: serverTimestamp(),
@@ -171,23 +193,21 @@ const updateUserProfile = async (newInformation) => {
 
     const docSnap = await getDoc(docRef);
 
-    // check tài liệu tồn tại hay không?
     if (docSnap.exists()) {
       const data = docSnap.data();
-
       return {
         status: 'success',
-        message: i18n.t('successfully'),
+        message: 'Profile updated successfully',
         data,
       };
     } else {
-      // docSnap.data() will be undefined in this case
-      // console.log('No such document!');
+      console.log('No such document!');
     }
   } catch (error) {
-    console.log(error);
+    console.error('Error updating profile:', error);
     return {
       status: 'error',
+      message: 'Failed to update profile',
     };
   }
 };
@@ -195,25 +215,23 @@ const updateUserProfile = async (newInformation) => {
 const getUserProfile = async (uid) => {
   try {
     const docRef = doc(db, COLLECTIONS.USERS, uid);
-
     const docSnap = await getDoc(docRef);
 
-    // check tài liệu tồn tại hay không?
     if (docSnap.exists()) {
       const data = docSnap.data();
       return {
         status: 'success',
-        message: i18n.t('loginSuccessfully'),
+        message: 'Profile retrieved successfully',
         data,
       };
     } else {
-      // docSnap.data() will be undefined in this case
-      // console.log('No such document!');
+      console.log('No such document!');
     }
   } catch (error) {
-    // console.log(error);
+    console.error('Error retrieving profile:', error);
     return {
       status: 'error',
+      message: 'Failed to retrieve profile',
     };
   }
 };
@@ -222,8 +240,10 @@ export const authApi = {
   login,
   signUp,
   logout,
-  deactivateAccount,
+  deleteAccount,
   delete: remove,
   updateUserProfile,
   getUserProfile,
+  sendEmailVerificationLink,
+  sendPasswordResetLink,
 };

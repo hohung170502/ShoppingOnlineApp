@@ -118,7 +118,21 @@ export const common = {
   notificationScreen: {
     noNotifications: 'No notifications!',
   },
-
+  SalespolicyScreen: {
+    Salespolicy: 'Sales Policy',
+  },
+  FreeScreen: {
+    Freefive: 'Free delivery for orders from 5 million',
+  },
+  GenuinecommitScreen: {
+    Genuinecommit: "Commitment to 100% genuine products",
+  },
+  exchangeScreen: {
+    exchange: "Return within 10 days",
+  },
+  SeedetailsScreen: {
+    Seedetails: 'See details',
+  },
   accountScreen: {
     registerOrLogin: 'Register/Login',
   },

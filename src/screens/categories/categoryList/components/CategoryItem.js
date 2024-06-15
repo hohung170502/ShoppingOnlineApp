@@ -47,6 +47,6 @@ const styles = StyleSheet.create({
 CategoryItem.propTypes = {
   data: PropTypes.object,
   onShow: PropTypes.func,
-  onDelete: PropTypes.func,
-  onUpdate: PropTypes.func,
+  onDelete: PropTypes.func.isRequired, // Đánh dấu prop này là bắt buộc (required)
+  onUpdate: PropTypes.func.isRequired, // Đánh dấu prop này là bắt buộc (required)
 };

@@ -18,7 +18,7 @@ export const getPercentPriceReduction = (price, priceOld) => {
   if (percent % 1 === 0 || roundedNumber.endsWith('00')) result = percent;
   if (roundedNumber.endsWith('0')) result = percent.toFixed(1);
 
-  if (result) return `-${result}%`;
+  if (result) return  ` -${result}%`;
   return null;
 };
 

@@ -10,9 +10,10 @@ import { colors, typography } from '~/styles';
 const COMMON_HEADER_HEIGHT = STATUS_BAR_HEIGHT + HEADER_HEIGHT;
 const EXTRA_HEADER_HEIGHT = 50;
 const INPUT_PADDING_BOTTOM = 8;
-const ITEM_WIDTH = SCREEN_WIDTH * 0.2;
-const IMAGE_SIZE = ITEM_WIDTH;
+const ITEM_WIDTH = SCREEN_WIDTH;
+
 export const StickyHeader = (props) => {
+
   const { children, onSearch } = props;
 
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -64,12 +65,15 @@ export const StickyHeader = (props) => {
           ]}>
           SHOPPING APP
         </Animated.Text> */}
-         <Animated.Image source={require('../../../../assets/images/Logo.png')} 
-         style={[
-          styles.appName,
-          { opacity: opacityTitle },
-          { transform: [{ translateY: translateTitle }] },
-        ]}/> 
+         <Animated.Image
+          source={require('../../../../assets/images/Logo.png')}
+          style={[
+            styles.appName,
+            { opacity: opacityTitle },
+            { transform: [{ translateY: translateTitle }] },
+          ]}
+          resizeMode="contain"
+        /> 
         <SearchBox onPress={onSearch} />
       </Animated.View>
       <Animated.ScrollView
@@ -135,8 +139,14 @@ const styles = StyleSheet.create({
     minHeight: SCREEN_HEIGHT,
   },
   appName: {
-    alignSelf: 'center',
+    width: SCREEN_WIDTH - 200,
+    height: SCREEN_WIDTH * 0.15,
     marginBottom: 16,
+    position: 'absolute',
+    bottom: 35,
+    right: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
     
   },
   fabButton: {

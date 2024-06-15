@@ -1,8 +1,6 @@
 import React from 'react';
 import { Alert, FlatList, StyleSheet, View } from 'react-native';
-
 import { useTranslation } from 'react-i18next';
-
 import { ratingApi } from '~/apis';
 import { FixedBottom, Header, LoadingIndicator } from '~/components';
 import { useGetListRatingRealtime } from '~/hooks';

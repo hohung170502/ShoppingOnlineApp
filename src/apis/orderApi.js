@@ -18,7 +18,12 @@ const add = async (userId, data) => {
     const items = data.map((element) => {
       return pick(element, ['id', 'price', 'priceOld', 'quantity']);
     });
+// Thêm .....
 
+
+
+
+// 
     const total = items.reduce(
       (accumulator, currentValue) =>
         accumulator + currentValue.price * currentValue.quantity,
