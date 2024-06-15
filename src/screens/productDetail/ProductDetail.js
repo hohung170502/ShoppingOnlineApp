@@ -116,13 +116,13 @@ export const ProductDetail = () => {
                     <Text style={styles.titleSlide}>{t('SeedetailsScreen.Seedetails')}</Text>
               </Pressable>
 
-              <Pressable style={styles.slide}>
+              {/* <Pressable style={styles.slide}>
                 <Pressable style={styles.slideView}>
-                  <MaterialCommunityIcons style={styles.icon} name="truck-fast-outline"  />
+                <MaterialCommunityIcons style={styles.icon} name="truck-fast-outline"  />
                 </Pressable>
                     <Text style={styles.title}>{t('exchangeScreen.exchange')}</Text>
                     <Text style={styles.titleSlide}>{t('SeedetailsScreen.Seedetails')}</Text>
-              </Pressable>
+              </Pressable> */}
             </View>
           )}
         </View>

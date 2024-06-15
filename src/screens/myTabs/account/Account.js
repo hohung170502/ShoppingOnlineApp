@@ -1,18 +1,18 @@
 import React from 'react';
 import { Alert, ScrollView, SectionList, StyleSheet, View } from 'react-native';
-
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { authApi } from '~/apis';
-import { ListItem } from '~/components';
+import { ListItem, Button } from '~/components';
 import { ROLES, SCREENS } from '~/constants';
 import { authActions, selectRole, selectUser } from '~/redux';
 import { Header, UserCard } from './components';
+import { sendEmailVerification } from 'firebase/auth';
 
 export const Account = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
@@ -73,6 +73,21 @@ export const Account = () => {
         },
       ],
     },
+    {
+      data: [
+        {
+          icon: 'lockperson',
+          title: t('changePassword'),
+          onPress: () => {
+            if (role === ROLES.USER) {
+              navigation.navigate(SCREENS.CHANGE_PASSWORD);
+            } else {
+              navigateToLogin();
+            }
+          },
+        },
+      ],
+    },
     ...(role !== ROLES.GUEST
       ? [
           {
@@ -87,7 +102,6 @@ export const Account = () => {
           },
         ]
       : []),
-    
     ...(role !== ROLES.GUEST
       ? [
           {
@@ -104,43 +118,60 @@ export const Account = () => {
       : []),
   ];
 
-  const handleDelete = () => {
-    Alert.alert(t(''), t('deleteText'), [
-      {
-        text: t('confirm'),
-        onPress: () => {
-          authApi.deactivateAccount();
-          
-          dispatch(authActions.removeUser());
-        },
-        style: 'destructive',
-      },
-
-      {
-        text: t('cancel'),
-        onPress: () => {},
-        style: 'cancel',
-      },
-      
-    ]);
-  };
   
-  const handleLogout = () => {
-    Alert.alert(t(''), t('logout'), [
-      {
-        text: t('cancel'),
-        onPress: () => {},
-        style: 'cancel',
-      },
-      {
-        text: t('ok'),
-        onPress: () => {
-          authApi.logout();
-          dispatch(authActions.removeUser());
+
+  const handleDelete = () => {
+    Alert.alert(
+      i18n.t('confirmDeleteTitle'),
+      i18n.t('deleteText'),
+      [
+        {
+          text: i18n.t('confirm'),
+          onPress: async () => {
+            try {
+              const result = await authApi.deleteAccount();
+              if (result.status === 'success') {
+                dispatch(authActions.removeUser());
+                Alert.alert(i18n.t('success'), result.message);
+                navigateToLogin();
+              } else {
+                Alert.alert(i18n.t('error'), result.message);
+              }
+            } catch (error) {
+              Alert.alert(i18n.t('error'), i18n.t('accountDeletionFailed'));
+            }
+          },
+          style: 'destructive',
         },
-        style: 'destructive',
-      },
-    ]);
+        {
+          text: i18n.t('cancel'),
+          onPress: () => {},
+          style: 'cancel',
+        },
+      ]
+    );
+  };
+
+  const handleLogout = () => {
+    Alert.alert(
+      t(''),
+      t('logout'),
+      [
+        {
+          text: t('cancel'),
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {
+          text: t('ok'),
+          onPress: () => {
+            authApi.logout();
+            dispatch(authActions.removeUser());
+          },
+          style: 'destructive',
+        },
+      ]
+    );
   };
 
   const navigateToUserInfo = () => {
@@ -154,20 +185,19 @@ export const Account = () => {
       ) : (
         <Header onPress={navigateToLogin} />
       )}
+      
       <SectionList
         scrollEnabled={false}
         sections={DATA}
         keyExtractor={(item, index) => item + index}
-        renderItem={({ item, index }) => {
-          return (
-            <ListItem
-              icon={item.icon}
-              title={item.title}
-              bottomDivider={item.bottomDivider ?? true}
-              onPress={item.onPress}
-            />
-          );
-        }}
+        renderItem={({ item, index }) => (
+          <ListItem
+            icon={item.icon}
+            title={item.title}
+            bottomDivider={item.bottomDivider ?? true}
+            onPress={item.onPress}
+          />
+        )}
         renderSectionHeader={({ section: { title } }) => (
           <View style={styles.header} />
         )}
@@ -184,3 +214,5 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
 });
+
+export default Account;

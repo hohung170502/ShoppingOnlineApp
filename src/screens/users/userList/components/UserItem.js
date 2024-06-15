@@ -6,7 +6,7 @@ import { Avatar, IconButton, Pressable, Text } from '~/components';
 import { colors } from '~/styles';
 
 export const UserItem = (props) => {
-  const { data, onShow, onUpdate, onDelete } = props;
+  const { data, onShow, onDelete } = props;
 
   return (
     

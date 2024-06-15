@@ -153,4 +153,12 @@ export const icons = {
     name: 'chatbubble-ellipses-outline',
     type: 'ionicon',
   },
+  retweet: {
+    name: 'retweet',
+    type: 'ant-design'
+  },
+  lockperson: {
+    name: 'lock-person',
+    type: 'material',
+  },
 };

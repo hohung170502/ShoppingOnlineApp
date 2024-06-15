@@ -15,6 +15,7 @@ import { useLoading } from '~/hooks';
 import { authActions } from '~/redux';
 import { colors } from '~/styles';
 import { showMessage } from '~/utils';
+import { FacebookAuthProvider, signInWithCredential } from 'firebase/auth';
 
 export const Login = () => {
   const { t } = useTranslation();
@@ -69,6 +70,24 @@ export const Login = () => {
   const navigateToSignUp = () => {
     navigation.navigate(SCREENS.SIGN_UP);
   };
+  // const SignInWithFB = async () => {
+  //   try {
+  //     const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
+  //     if (result.isCancelled) {
+  //       throw new Error('User cancelled login');
+  //     }
+  //     const data = await AccessToken.getCurrentAccessToken();
+  //     if (!data) {
+  //       throw new Error('Something went wrong obtaining access token');
+  //     }
+
+  //     const credential = FacebookAuthProvider.credential(data.accessToken);
+  //     const user = await signInWithCredential(auth, credential);
+  //     console.log(user);
+  //   } catch (error) {
+  //     console.error('Error during Facebook sign-in', error);
+  //   }
+  // };
 
   return (
     <>
@@ -126,6 +145,7 @@ export const Login = () => {
             </Text>
           </Pressable>
         </View>
+        
       </KeyboardAwareScrollView>
     </>
   );
@@ -153,4 +173,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
   },
+
 });
